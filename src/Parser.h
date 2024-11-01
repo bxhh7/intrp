@@ -37,6 +37,7 @@ struct ASTVisitor
 	virtual int64_t visit(const UnaryExpr&) = 0;
 	virtual int64_t visit(const AssignmentExpr&) = 0;
 	virtual int64_t visit(const LiteralIntExpr&) = 0;
+	virtual int64_t visit(const LiteralStringExpr&) = 0;
 	virtual int64_t visit(const IdentifierExpr&) = 0;
 	virtual int64_t visit(const TautExpr&) = 0;
 	virtual int64_t visit(const NilExpr&) = 0;
@@ -153,6 +154,16 @@ struct LiteralIntExpr : public PrimaryExpr
 {
 	LiteralIntExpr() {}
 	LiteralIntExpr(Token& t) : tok {t}{}
+
+	int64_t accept(ASTVisitor& v) const override { return v.visit(*this);}
+
+	Token tok;
+};
+
+struct LiteralStringExpr : public PrimaryExpr
+{
+	LiteralStringExpr() {}
+	LiteralStringExpr(Token& t) : tok {t}{}
 
 	int64_t accept(ASTVisitor& v) const override { return v.visit(*this);}
 

@@ -362,6 +362,7 @@ ASTNodePtr Parser::primary()
 		case TOK_NIL:						return std::make_shared<NilExpr>();
 		case TOK_NUMBER:					return std::make_shared<LiteralIntExpr>(tok);
 		case TOK_IDENTIFIER:				return std::make_shared<IdentifierExpr>(tok);
+		case TOK_STRING: 					return std::make_shared<LiteralStringExpr>(tok);
 		default:
 											expect("PrimaryExpression.");
 	}

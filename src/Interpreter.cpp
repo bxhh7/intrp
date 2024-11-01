@@ -15,6 +15,7 @@ int64_t Interpreter::visit(const PrimaryExpr& p)
 
 int64_t Interpreter::visit(const BinaryExpr& b) 
 {
+	/* TODO: type checking */
 	int64_t lhs = b.lhs->accept(*this);
 	int64_t rhs = b.rhs->accept(*this);
 	switch(b.op)
@@ -67,6 +68,12 @@ int64_t Interpreter::visit(const LiteralIntExpr& li)
 {
 	return atoi(li.tok.lexeme().c_str());
 }
+
+int64_t Interpreter::visit(const LiteralStringExpr& ls)
+{
+	return 1;
+}
+
 int64_t Interpreter::visit(const IdentifierExpr& id) 
 {
 	auto it = this->env.find(id.tok.lexeme());
@@ -133,6 +140,10 @@ int64_t Interpreter::visit(const PrintExpr& p)
 	{
 		std::cout << p.tok.lexeme();
 	}
+	else if (p.tok.type() == TOK_STRING)
+	{
+		std::cout << p.tok.lexeme();
+	}
 	return 0;
 }
 
@@ -165,3 +176,4 @@ int64_t Interpreter::visit(const BlockExpr& bl)
 	}
 	return 0;
 }
+

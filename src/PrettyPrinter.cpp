@@ -62,6 +62,12 @@ int64_t PrettyPrinter::visit(const LiteralIntExpr& li)
 	return 0;
 };
 
+int64_t PrettyPrinter::visit(const LiteralStringExpr& ls) 
+{
+	m_ostream << "[ls" << ls.tok.lexeme() << "]";
+	return 0;
+};
+
 int64_t PrettyPrinter::visit(const IdentifierExpr& id)  
 {
 	m_ostream << "[I " << id.tok.lexeme() << "]";

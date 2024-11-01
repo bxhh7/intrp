@@ -12,6 +12,7 @@ struct Interpreter : public ASTVisitor
 	int64_t visit(const UnaryExpr&) override;
 	int64_t visit(const AssignmentExpr&) override;
 	int64_t visit(const LiteralIntExpr&) override;
+	int64_t visit(const LiteralStringExpr&) override;
 	int64_t visit(const IdentifierExpr&) override;
 	int64_t visit(const TautExpr&) override;
 	int64_t visit(const NilExpr&) override;

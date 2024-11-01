@@ -9,6 +9,7 @@
 enum TokenType
 {
 	TOK_NUMBER,
+	TOK_STRING,
 	TOK_OPAREN,
 	TOK_CPAREN,
 	TOK_PLUS,
@@ -117,6 +118,7 @@ class Lexer
 		static bool is_alphabetic(char);
 		static bool is_numeric(char);
 		static bool is_identifier(char x);
+		static bool is_not_string_end(char x); /* is not " */
 
 		static void detect_keyword(Token& tok);
 	private:
@@ -127,9 +129,10 @@ class Lexer
 		bool _match(const std::string& str);
 		bool _match(char x);
 		uint64_t m_skip_while(Predicate);
+
 		
 		/* returns a token of t, with the lexeme determined by the predicate*/
-		Token lex_while(TokenType t, Predicate);
+		Token lex_while(TokenType t, Predicate, bool inclusive = false);
 		
 		void m_undo(Token);
 		Token m_temp {TOK_NONE}; 

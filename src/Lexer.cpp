@@ -59,11 +59,20 @@ uint64_t Lexer::m_skip_while(Lexer::Predicate p)
 	return offt;
 }
 
-Token Lexer::lex_while(TokenType type, Predicate p)
+Token Lexer::lex_while(TokenType type, Predicate p, bool inclusive)
 {
 	uint64_t begin = m_cursor - 1;
 	uint64_t len = m_skip_while(p) + 1;
-	std::string lexeme = m_buffer.substr(begin, len);
+	std::string lexeme;
+	if (inclusive)
+	{
+		 lexeme = m_buffer.substr(begin, len + 1);
+		 m_cursor++;
+	}
+	else
+	{
+		 lexeme = m_buffer.substr(begin, len);
+	}
 	Token tok {type, lexeme};
 	return tok;
 }
@@ -98,6 +107,14 @@ Token Lexer::next()
 				return tok;
 			}
 			break;
+		
+		case '"':
+			{
+				Token tok = lex_while(TOK_STRING, is_not_string_end, true);
+				return tok;
+			}
+			break;
+
 		case '(': 
 			if (_match(')'))
 			{
@@ -272,6 +289,11 @@ bool Lexer::is_space(char x)
 	return std::isspace(x);
 }
 
+bool Lexer::is_not_string_end(char x)
+{
+	return x != '"';
+}
+
 bool Lexer::is_alphabetic(char x)
 {
 	return std::isalpha(x);
@@ -364,6 +386,7 @@ const std::string Token::lexeme() const
 std::unordered_map<TokenType, std::string> Token::type_str_map = 
 {
 	{TOK_NUMBER, 			"TOK_NUMBER" },
+	{TOK_STRING, 			"TOK_STRING" },
 	{TOK_OPAREN,            "TOK_OPAREN"},
 	{TOK_CPAREN,            "TOK_CPAREN"},
 	{TOK_PLUS,              "TOK_PLUS"},
