@@ -4,22 +4,22 @@
 struct PrettyPrinter : public ASTVisitor
 {
 	PrettyPrinter(std::ostream& os) : m_ostream {os} {}
-	int64_t visit(const PrimaryExpr&) override;
-	int64_t visit(const BinaryExpr&) override;
-	int64_t visit(const ExprList&) override;
-	int64_t visit(const UnaryExpr&) override;
-	int64_t visit(const AssignmentExpr&) override;
-	int64_t visit(const LiteralIntExpr&) override;
-	int64_t visit(const LiteralStringExpr&) override;
-	int64_t visit(const IdentifierExpr&) override;
-	int64_t visit(const TautExpr&) override;
-	int64_t visit(const NilExpr&) override;
-	int64_t visit(const IfExpr&) override;
-	int64_t visit(const WhileExpr&) override;
-	int64_t visit(const PrintExpr&) override;
-	int64_t visit(const FuncDeclExpr&) override;
-	int64_t visit(const FuncCallExpr&) override;
-	int64_t visit(const BlockExpr&) override;
+	Object visit(const PrimaryExpr&) override;
+	Object visit(const BinaryExpr&) override;
+	Object visit(const ExprList&) override;
+	Object visit(const UnaryExpr&) override;
+	Object visit(const AssignmentExpr&) override;
+	Object visit(const LiteralIntExpr&) override;
+	Object visit(const LiteralStringExpr&) override;
+	Object visit(const IdentifierExpr&) override;
+	Object visit(const TautExpr&) override;
+	Object visit(const NilExpr&) override;
+	Object visit(const IfExpr&) override;
+	Object visit(const WhileExpr&) override;
+	Object visit(const PrintExpr&) override;
+	Object visit(const FuncDeclExpr&) override;
+	Object visit(const FuncCallExpr&) override;
+	Object visit(const BlockExpr&) override;
 	private:
 		std::ostream& m_ostream;
 };
