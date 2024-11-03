@@ -2,15 +2,15 @@
 
 #include "PrettyPrinter.h"
 
-int64_t PrettyPrinter::visit(const UnaryExpr& unary)
+Object PrettyPrinter::visit(const UnaryExpr& unary)
 {
 	m_ostream << "(" << Token::type_str_map[unary.op];
 	unary.expr->accept(*this);
 	m_ostream << ")";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const ExprList& expr_list)
+Object PrettyPrinter::visit(const ExprList& expr_list)
 {
 	m_ostream << "(";
 	for (const ASTNodePtr& node : expr_list.list)
@@ -18,73 +18,73 @@ int64_t PrettyPrinter::visit(const ExprList& expr_list)
 		node->accept(*this);
 	}
 	m_ostream << ")";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const BinaryExpr& binary)
+Object PrettyPrinter::visit(const BinaryExpr& binary)
 {
 	m_ostream << "(" << Token::type_str_map[binary.op] << " ";
 	binary.lhs->accept(*this);
 	m_ostream << ", ";
 	binary.rhs->accept(*this);
 	m_ostream << ") ";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const PrimaryExpr& primary)
+Object PrettyPrinter::visit(const PrimaryExpr& primary)
 {
 	m_ostream << "(PRIMARY??)";
 	/*std::string val;*/
 	/*std::visit(*/
 	/*		overloaded*/
 	/*		{*/
-	/*			[&](const int64_t i) { val = std::to_string(i); },*/
+	/*			[&](const Object i) { val = std::to_string(i); },*/
 	/*			[&](const std::string& s) { val = s; }*/
 	/*		}, primary.tok.value()*/
 	/*		);*/
 	/*m_ostream << " "  << val << " ";*/
-	return 0; /* we're not really evaluating anything here */
+	return Object{}; /* we're not really evaluating anything here */
 }
 
 
-int64_t PrettyPrinter::visit(const AssignmentExpr& ass) 
+Object PrettyPrinter::visit(const AssignmentExpr& ass) 
 {
 	m_ostream << "("; 
 	ass.rhs->accept(*this);
 	m_ostream << "<-";
 	ass.lhs->accept(*this);
 	m_ostream << ")";
-	return 0;
+	return Object{};
 };
-int64_t PrettyPrinter::visit(const LiteralIntExpr& li) 
+Object PrettyPrinter::visit(const LiteralIntExpr& li) 
 {
 	m_ostream << "[li" << li.tok.lexeme() << "]";
 	return 0;
 };
 
-int64_t PrettyPrinter::visit(const LiteralStringExpr& ls) 
+Object PrettyPrinter::visit(const LiteralStringExpr& ls) 
 {
 	m_ostream << "[ls" << ls.tok.lexeme() << "]";
 	return 0;
 };
 
-int64_t PrettyPrinter::visit(const IdentifierExpr& id)  
+Object PrettyPrinter::visit(const IdentifierExpr& id)  
 {
 	m_ostream << "[I " << id.tok.lexeme() << "]";
-	return 0;
+	return Object{};
 };
 
-int64_t PrettyPrinter::visit(const TautExpr&) 
+Object PrettyPrinter::visit(const TautExpr&) 
 {
 	m_ostream << "Taut";
-	return 0;
+	return Object{};
 };
-int64_t PrettyPrinter::visit(const NilExpr&) 
+Object PrettyPrinter::visit(const NilExpr&) 
 {
 	m_ostream << "Nil";
-	return 0;
+	return Object{};
 };
-int64_t PrettyPrinter::visit(const IfExpr& cond)  
+Object PrettyPrinter::visit(const IfExpr& cond)  
 {
 	m_ostream << "(IF [";
 	cond.condition->accept(*this);
@@ -99,10 +99,10 @@ int64_t PrettyPrinter::visit(const IfExpr& cond)
 		cond.else_cluse[i]->accept(*this);
 	}
 	m_ostream << "}";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const WhileExpr& whilex) 
+Object PrettyPrinter::visit(const WhileExpr& whilex) 
 {
 	m_ostream << "(WHILE[";
 	whilex.condition->accept(*this);
@@ -112,29 +112,29 @@ int64_t PrettyPrinter::visit(const WhileExpr& whilex)
 		whilex.body[i]->accept(*this);
 	}
 	m_ostream << "}";
-	return 0;
+	return Object{};
 }
-int64_t PrettyPrinter::visit(const PrintExpr& p) 
+Object PrettyPrinter::visit(const PrintExpr& p) 
 {
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const FuncDeclExpr& fd) 
+Object PrettyPrinter::visit(const FuncDeclExpr& fd) 
 {
 	/* TODO print parameters */
 	m_ostream << "FD "<< fd.name.lexeme() << "(){";
 	fd.body->accept(*this);
 	m_ostream << "}";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const FuncCallExpr& fc) 
+Object PrettyPrinter::visit(const FuncCallExpr& fc) 
 {
 	m_ostream << "FC " << fc.name.lexeme() << "();";
-	return 0;
+	return Object{};
 }
 
-int64_t PrettyPrinter::visit(const BlockExpr& be) 
+Object PrettyPrinter::visit(const BlockExpr& be) 
 {
 	m_ostream << "BLOCK{";
 	for (int i = 0; i < be.body.size(); i++)
@@ -142,5 +142,5 @@ int64_t PrettyPrinter::visit(const BlockExpr& be)
 		be.body[i]->accept(*this);
 	}
 	m_ostream << "}ENDBLOCK";
-	return 0;
+	return Object{};
 }

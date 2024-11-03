@@ -7,74 +7,88 @@ void Interpreter::error(const std::string& error)
 	throw std::runtime_error(error);
 }
 
-int64_t Interpreter::visit(const PrimaryExpr& p) 
+Object Interpreter::visit(const PrimaryExpr& p) 
 {
 	error("Interpreter : primary doenst mean shit.\n");
-	return 0; // unreachable
+	return Object{}; // unreachable
 }
 
-int64_t Interpreter::visit(const BinaryExpr& b) 
+Object Interpreter::visit(const BinaryExpr& b) 
 {
-	/* TODO: type checking */
-	int64_t lhs = b.lhs->accept(*this);
-	int64_t rhs = b.rhs->accept(*this);
+	Object lhs = b.lhs->accept(*this);
+	if (!(lhs.is_primary  && lhs.m_primary_value.type == PRIMARYTYPE_INT))
+	{
+		/* TODO throw expcetion */
+		std::cerr << "TEMPORARY:lhs is expected to be int" << std::endl;
+		return Object{};
+	}
+	Object rhs = b.rhs->accept(*this);
+	if (!(rhs.is_primary  && rhs.m_primary_value.type == PRIMARYTYPE_INT))
+	{
+		/* TODO throw expcetion */
+		std::cerr << "TEMPORARY:rhs is expected to be int" << std::endl;
+		return Object{};
+	}
+
+	int64_t rhs_value = rhs.m_primary_value.integer;
+	int64_t lhs_value = lhs.m_primary_value.integer;
 	switch(b.op)
 	{
-		case TOK_LOR:  					return lhs || rhs; break;
-		case TOK_LAND: 					return lhs && rhs; break;
-		case TOK_EQ: 					return lhs == rhs; break;
-		case TOK_GT: 					return lhs > rhs;  break;
-		case TOK_GE: 					return lhs >= rhs; break;
-		case TOK_LE: 					return lhs <= rhs;  break;
-		case TOK_LT: 					return lhs < rhs; break;
-		case TOK_PLUS: 					return lhs + rhs;  break;
-		case TOK_MINUS: 				return lhs - rhs;  break;
-		case TOK_STAR: 					return lhs * rhs;  break;
-		case TOK_SLASH: 				return lhs / rhs;  break;
+		case TOK_LOR:  					return lhs_value || rhs_value; break;
+		case TOK_LAND: 					return lhs_value && rhs_value; break;
+		case TOK_EQ: 					return lhs_value == rhs_value; break;
+		case TOK_GT: 					return lhs_value > rhs_value;  break;
+		case TOK_GE: 					return lhs_value >= rhs_value; break;
+		case TOK_LE: 					return lhs_value <= rhs_value;  break;
+		case TOK_LT: 					return lhs_value < rhs_value; break;
+		case TOK_PLUS: 					return lhs_value + rhs_value;  break;
+		case TOK_MINUS: 				return lhs_value - rhs_value;  break;
+		case TOK_STAR: 					return lhs_value * rhs_value;  break;
+		case TOK_SLASH: 				return lhs_value / rhs_value;  break;
 		default:
 			std::cerr << "invalid binary operator " << b.op << std::endl;
 			error("invaid binary operaotr");
-			return 0;
+			return Object{};
 	}
 }
 
-int64_t Interpreter::visit(const ExprList&) 
+Object Interpreter::visit(const ExprList&) 
 {
 	error("Exprlist not implemented");
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const UnaryExpr&) 
+Object Interpreter::visit(const UnaryExpr&) 
 {
 	error("UnaryExpr not implemented");
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const AssignmentExpr& ass) 
+Object Interpreter::visit(const AssignmentExpr& ass) 
 {
 	if (!std::dynamic_pointer_cast<IdentifierExpr>(ass.lhs))
 	{
 		error("expected lvalue for assignment.\n"); 
-		return 0;
+		return Object{};
 	}
 
 	std::shared_ptr<IdentifierExpr> id = std::dynamic_pointer_cast<IdentifierExpr>(ass.lhs);
-	int64_t rhs = ass.rhs->accept(*this);
+	Object rhs = ass.rhs->accept(*this);
 	env[id->tok.lexeme()] = ass.rhs->accept(*this);
 	return rhs;
 }
 
-int64_t Interpreter::visit(const LiteralIntExpr& li) 
+Object Interpreter::visit(const LiteralIntExpr& li) 
 {
 	return atoi(li.tok.lexeme().c_str());
 }
 
-int64_t Interpreter::visit(const LiteralStringExpr& ls)
+Object Interpreter::visit(const LiteralStringExpr& ls) 
 {
-	return 1;
+	return ls.tok.lexeme();
 }
 
-int64_t Interpreter::visit(const IdentifierExpr& id) 
+Object Interpreter::visit(const IdentifierExpr& id) 
 {
 	auto it = this->env.find(id.tok.lexeme());
 	if (it == this->env.end())
@@ -85,18 +99,24 @@ int64_t Interpreter::visit(const IdentifierExpr& id)
 	return this->env[id.tok.lexeme()];
 }
 
-int64_t Interpreter::visit(const TautExpr&) 
+Object Interpreter::visit(const TautExpr&) 
 {
 	return true;
 }
-int64_t Interpreter::visit(const NilExpr&) 
+Object Interpreter::visit(const NilExpr&) 
 {
 	return false;
 }
-int64_t Interpreter::visit(const IfExpr& cond) 
+Object Interpreter::visit(const IfExpr& cond) 
 {
-	int64_t condition_eval = cond.condition->accept(*this);
-	if (condition_eval)
+	Object condition_eval = cond.condition->accept(*this);
+	/* TODO: add boolean as primary type */
+	if (!(condition_eval.is_primary && condition_eval.m_primary_value.type == PRIMARYTYPE_INT))
+	{
+		std::cerr << "TEMPORARY: condition must evaluate to integer\n";
+		return Object{};
+	}
+	if (condition_eval.m_primary_value.integer)
 	{
 		for (int i = 0; i < cond.body.size(); i++)
 		{
@@ -110,21 +130,36 @@ int64_t Interpreter::visit(const IfExpr& cond)
 			cond.else_cluse[i]->accept(*this);
 		}
 	}
-	return 0;
+	return Object{};
 }
-int64_t Interpreter::visit(const WhileExpr& whilex)
+Object Interpreter::visit(const WhileExpr& whilex)
 {
-	while (whilex.condition->accept(*this))
+
+	Object condition_eval = whilex.condition->accept(*this);
+	/* TODO: add boolean as primary type */
+	if (!(condition_eval.is_primary && condition_eval.m_primary_value.type == PRIMARYTYPE_INT))
 	{
+		std::cerr << "TEMPORARY: condition must evaluate to integer\n";
+		return Object{};
+	}
+	while (condition_eval.m_primary_value.integer)
+	{
+		condition_eval = whilex.condition->accept(*this);
+		/* TODO: add boolean as primary type */
+		if (!(condition_eval.is_primary && condition_eval.m_primary_value.type == PRIMARYTYPE_INT))
+		{
+			std::cerr << "TEMPORARY: condition must evaluate to integer\n";
+			return Object{};
+		}
 		for (int i = 0; i < whilex.body.size(); i++)
 		{
 			whilex.body[i]->accept(*this);
 		}
 	}
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const PrintExpr& p) 
+Object Interpreter::visit(const PrintExpr& p) 
 {
 	if (p.tok.type() == TOK_IDENTIFIER)
 	{
@@ -140,20 +175,16 @@ int64_t Interpreter::visit(const PrintExpr& p)
 	{
 		std::cout << p.tok.lexeme();
 	}
-	else if (p.tok.type() == TOK_STRING)
-	{
-		std::cout << p.tok.lexeme();
-	}
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const FuncDeclExpr& fd) 
+Object Interpreter::visit(const FuncDeclExpr& fd) 
 {
 	this->func_env[fd.name.lexeme()] = fd.body;
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const FuncCallExpr& fc) 
+Object Interpreter::visit(const FuncCallExpr& fc) 
 {
 	auto it = this->func_env.find(fc.name.lexeme());
 	if (it == this->func_env.end())
@@ -165,15 +196,14 @@ int64_t Interpreter::visit(const FuncCallExpr& fc)
 
 	it->second->accept(*this);
 
-	return 0;
+	return Object{};
 }
 
-int64_t Interpreter::visit(const BlockExpr& bl) 
+Object Interpreter::visit(const BlockExpr& bl) 
 {
 	for (int i = 0; i < bl.body.size(); i++)
 	{
 		bl.body[i]->accept(*this);
 	}
-	return 0;
+	return Object{};
 }
-
