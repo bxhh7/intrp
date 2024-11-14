@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <iostream>
 #include "Interpreter.h"
+#include "Object.h"
 
 void Interpreter::error(const std::string& error)
 {
@@ -161,20 +162,23 @@ Object Interpreter::visit(const WhileExpr& whilex)
 
 Object Interpreter::visit(const PrintExpr& p) 
 {
-	if (p.tok.type() == TOK_IDENTIFIER)
-	{
+	/* if (p.tok.type() == TOK_IDENTIFIER) */
+	/* { */
 
-		auto it = this->env.find(p.tok.lexeme());
-		if (it == this->env.end())
-		{
-			std::cout << "nil\n";
-		}
-		std::cout << this->env[p.tok.lexeme()];
-	}
-	else if (p.tok.type() == TOK_NUMBER) 
-	{
-		std::cout << p.tok.lexeme();
-	}
+	/* 	auto it = this->env.find(p.tok.lexeme()); */
+	/* 	if (it == this->env.end()) */
+	/* 	{ */
+	/* 		std::cout << "nil\n"; */
+	/* 	} */
+	/* 	std::cout << this->env[p.tok.lexeme()]; */
+	/* } */
+	/* else if (p.tok.type() == TOK_NUMBER) */ 
+	/* { */
+	/* 	std::cout << p.tok.lexeme(); */
+	/* } */
+
+	Object toprint = p.expr->accept(*this);
+	std::cout << toprint;
 	return Object{};
 }
 

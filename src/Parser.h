@@ -109,7 +109,7 @@ struct WhileExpr : public Expr
 /* TODO: make a more robust print */
 struct PrintExpr : public Expr
 {
-	Token tok;
+	ASTNodePtr expr;
 	Object accept(ASTVisitor& v) const override { return v.visit(*this); } 
 };
 

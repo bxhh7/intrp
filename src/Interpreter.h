@@ -23,6 +23,7 @@ struct Interpreter : public ASTVisitor
 	Object visit(const FuncCallExpr&) override;
 	Object visit(const BlockExpr&) override;
 	private:
+	void print_object(const Object&);
 	void error(const std::string& error);
 	/* TODO: support other types */
 	/* TODO custom class for Env */

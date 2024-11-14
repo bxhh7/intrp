@@ -18,8 +18,8 @@ struct PrimaryValue
 
 struct Object
 {
-	Object(int64_t v) : m_primary_value {v} {is_primary = true; m_primary_value.type = PRIMARYTYPE_INT;}
-	Object(const std::string& v) : m_primary_value {v} {is_primary = true; m_primary_value.type = PRIMARYTYPE_STR;}
+	Object(int64_t v) : m_primary_value {v} {is_none=false; is_primary = true; m_primary_value.type = PRIMARYTYPE_INT;}
+	Object(const std::string& v) : m_primary_value {v} {is_none=false; is_primary = true; m_primary_value.type = PRIMARYTYPE_STR;}
 	Object() : m_primary_value{0}, is_none{true} {} 
 	bool is_none{1};
 	bool is_primary;
@@ -29,11 +29,15 @@ struct Object
 
 inline std::ostream& operator<<(std::ostream&os , Object& obj)
 {
-	if (!obj.is_primary)
+	if (obj.is_none)
+	{
+		std::cout << "NONE\n";
+	}
+	else if (!obj.is_primary)
 	{
 		std::cerr << "TEMPORARY: printing user defined types in currenlty not supported.\n";
 	}
-	if (obj.m_primary_value.type == PRIMARYTYPE_INT)
+	else if (obj.m_primary_value.type == PRIMARYTYPE_INT)
 	{
 		std::cout << "INT " << obj.m_primary_value.integer << std::endl;
 	}

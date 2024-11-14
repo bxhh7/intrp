@@ -90,7 +90,7 @@ ASTNodePtr Parser::print()
 	PrintExpr ret;
 	if (m_lexer.match(TOK_PRINT))
 	{
-		ret.tok = m_lexer.next();
+		ret.expr = this->expression();
 		return std::make_shared<PrintExpr>(ret);
 	}
 	return condition();
