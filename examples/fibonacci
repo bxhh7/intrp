@@ -1,0 +1,19 @@
+
+
+fibonacci()
+{
+	a = 0
+	b = 1
+	count = 0
+	while (count < 20)
+	{
+		fib = a + b
+		print fib
+		a = b
+		b = fib
+		count = count + 1
+	}
+}
+
+fibonacci()
+
