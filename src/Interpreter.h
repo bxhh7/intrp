@@ -1,7 +1,10 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 #include "Parser.h"
 #include "Object.h"
+#include "Env.h"
+
 struct Interpreter : public ASTVisitor
 {
 	public:
@@ -28,7 +31,9 @@ struct Interpreter : public ASTVisitor
 	void error(const std::string& error);
 	/* TODO: support other types */
 	/* TODO custom class for Env */
-		std::unordered_map<std::string, Object> env;
-		std::unordered_map<std::string, std::shared_ptr<BlockExpr>> func_env;
+		/* std::vector<Env> env_vec; */
+		/* std::unordered_map<std::string, Object> env; */
+	Env env;
+	std::unordered_map<std::string, std::shared_ptr<BlockExpr>> func_env;
 };
 

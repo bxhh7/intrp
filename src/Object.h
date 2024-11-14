@@ -25,6 +25,10 @@ struct Object
 	bool is_primary;
 	std::string type_name;
 	PrimaryValue m_primary_value;
+	operator bool() const
+	{
+		return !is_none;
+	}
 };
 
 inline std::ostream& operator<<(std::ostream&os , Object& obj)

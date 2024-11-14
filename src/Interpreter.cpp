@@ -75,7 +75,7 @@ Object Interpreter::visit(const AssignmentExpr& ass)
 
 	std::shared_ptr<IdentifierExpr> id = std::dynamic_pointer_cast<IdentifierExpr>(ass.lhs);
 	Object rhs = ass.rhs->accept(*this);
-	env[id->tok.lexeme()] = ass.rhs->accept(*this);
+	env.bind(id->tok.lexeme(), ass.rhs->accept(*this));
 	return rhs;
 }
 
@@ -91,13 +91,14 @@ Object Interpreter::visit(const LiteralStringExpr& ls)
 
 Object Interpreter::visit(const IdentifierExpr& id) 
 {
-	auto it = this->env.find(id.tok.lexeme());
-	if (it == this->env.end())
+	Object obj = env.lookup(id.tok.lexeme());
+
+	if (!obj)
 	{
 		std::cerr << "undeclared identifier " << id.tok.lexeme() << std::endl;
 		error("undeclared identifier");
 	}
-	return this->env[id.tok.lexeme()];
+	return obj;
 }
 
 Object Interpreter::visit(const TautExpr&) 
@@ -208,6 +209,7 @@ Object Interpreter::visit(const ReturnExpr& re)
 }
 Object Interpreter::visit(const BlockExpr& bl) 
 {
+	env.push_env();
 	for (int i = 0; i < bl.body.size(); i++)
 	{
 		if (std::dynamic_pointer_cast<ReturnExpr>(bl.body[i]))
@@ -219,5 +221,6 @@ Object Interpreter::visit(const BlockExpr& bl)
 		}
 		bl.body[i]->accept(*this);
 	}
+	env.pop_env();
 	return Object{};
 }
