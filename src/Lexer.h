@@ -38,6 +38,7 @@ enum TokenType
 	TOK_ELSE,
 	TOK_WHILE,
 	TOK_PRINT,
+	TOK_RETURN,
 
 	TOK_EOF,
 	TOK_NONE, 

@@ -22,6 +22,7 @@ struct Interpreter : public ASTVisitor
 	Object visit(const FuncDeclExpr&) override;
 	Object visit(const FuncCallExpr&) override;
 	Object visit(const BlockExpr&) override;
+	Object visit(const ReturnExpr&) override;
 	private:
 	void print_object(const Object&);
 	void error(const std::string& error);

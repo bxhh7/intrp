@@ -211,6 +211,10 @@ void Lexer::detect_keyword(Token& tok)
 	{
 		tok.set_type(TOK_PRINT);
 	}
+	if (tok.lexeme() == "return")
+	{
+		tok.set_type(TOK_RETURN);
+	}
 }
 bool Lexer::_match(char x)
 {
@@ -413,5 +417,6 @@ std::unordered_map<TokenType, std::string> Token::type_str_map =
 	{TOK_WHILE,             "TOK_WHILE"},
 	{TOK_IF,             "TOK_IF"},
 	{TOK_CALL,             "TOK_CALL"},
+	{TOK_RETURN,           			"TOK_RETURN"},
 
 };

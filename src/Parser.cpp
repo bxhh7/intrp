@@ -26,7 +26,7 @@ ASTNodePtr Parser::decl()
 
 ASTNodePtr Parser::func()
 {
-	ASTNodePtr lhs = print();
+	ASTNodePtr lhs = ret();
 	if (m_lexer.match(TOK_CALL))
 	{
 		if (!std::dynamic_pointer_cast<IdentifierExpr>(lhs)) /* TODO
@@ -39,6 +39,7 @@ ASTNodePtr Parser::func()
 
 		if (m_lexer.peek().type() == TOK_OCURLY)
 		{
+			/* FUNCTION DECLARATION */
 			FuncDeclExpr ret;
 			ASTNodePtr body = block();
 			if (!std::dynamic_pointer_cast<BlockExpr>(body))
@@ -63,6 +64,21 @@ ASTNodePtr Parser::func()
 		}
 	}
 	return lhs;
+}
+
+ASTNodePtr Parser::ret()
+{
+	if (m_lexer.match(TOK_RETURN))
+	{
+
+		std::shared_ptr<ReturnExpr> re = std::make_shared<ReturnExpr>();
+		re->expr = expression();
+		return re;
+	}
+	else
+	{
+		return print();
+	}
 }
 
 ASTNodePtr Parser::block()

@@ -144,3 +144,10 @@ Object PrettyPrinter::visit(const BlockExpr& be)
 	m_ostream << "}ENDBLOCK";
 	return Object{};
 }
+Object PrettyPrinter::visit(const ReturnExpr& re) 
+{
+	m_ostream << "RETURN ("; 
+	re.expr->accept(*this);
+	m_ostream << ");\n";
+	return Object{};
+}

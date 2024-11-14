@@ -20,6 +20,7 @@ struct PrintExpr;
 struct FuncDeclExpr;
 struct FuncCallExpr;
 struct BlockExpr;
+struct ReturnExpr;
 
 struct ASTVisitor
 {
@@ -41,6 +42,7 @@ struct ASTVisitor
 	virtual Object visit(const IdentifierExpr&) = 0;
 	virtual Object visit(const TautExpr&) = 0;
 	virtual Object visit(const NilExpr&) = 0;
+	virtual Object visit(const ReturnExpr&) = 0;
 };
 
 struct ASTNode 
@@ -191,6 +193,11 @@ struct NilExpr : public PrimaryExpr
 	Object accept(ASTVisitor& v) const override { return v.visit(*this);}
 };
 
+struct ReturnExpr : public Expr
+{
+	ASTNodePtr expr;
+	Object accept(ASTVisitor& v) const override {return v.visit(*this);}
+};
 
 class Parser
 {
@@ -212,6 +219,7 @@ class Parser
 		ASTNodePtr expression();
 		ASTNodePtr condition();
 		ASTNodePtr loop();
+		ASTNodePtr ret();
 		ASTNodePtr print();
 
 		ASTNodePtr assignment();

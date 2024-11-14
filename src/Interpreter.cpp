@@ -198,15 +198,25 @@ Object Interpreter::visit(const FuncCallExpr& fc)
 	}
 	/*return this->env[id.tok.lexeme()];*/
 
-	it->second->accept(*this);
+	return it->second->accept(*this);
 
-	return Object{};
 }
 
+Object Interpreter::visit(const ReturnExpr& re)
+{
+	return re.expr->accept(*this);
+}
 Object Interpreter::visit(const BlockExpr& bl) 
 {
 	for (int i = 0; i < bl.body.size(); i++)
 	{
+		if (std::dynamic_pointer_cast<ReturnExpr>(bl.body[i]))
+		{
+			/* In case there's a return statement, stop evaluating expressions in the block and return the value. */
+			/* TODO: print an error message if there are any other statements after the return statement */
+			Object retval = bl.body[i]->accept(*this);
+			return retval;
+		}
 		bl.body[i]->accept(*this);
 	}
 	return Object{};
