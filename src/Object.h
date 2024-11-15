@@ -4,6 +4,7 @@
 #include <string>
 #include <variant>
 #include <iostream>
+#include <cstdint>
 /* Temporary Object class to get things working for now. */
 enum PrimaryValueType {PRIMARYTYPE_STR, PRIMARYTYPE_INT};
 struct PrimaryValue

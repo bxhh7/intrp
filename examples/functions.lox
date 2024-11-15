@@ -1,5 +1,5 @@
-i = 0 
-j = 0
+var i = 0 
+var j = 0
 f() 
 {
 	j = j + 1
@@ -7,7 +7,6 @@ f()
 }
 while ( i < 40 )
 {
-	j = 0
 	while ( j < 10)
 	{
 		print j

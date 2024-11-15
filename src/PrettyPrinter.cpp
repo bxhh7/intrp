@@ -151,3 +151,14 @@ Object PrettyPrinter::visit(const ReturnExpr& re)
 	m_ostream << ");\n";
 	return Object{};
 }
+
+Object PrettyPrinter::visit(const VarDefExpr& vd) 
+{
+	m_ostream << "VARDEF (" << vd.identifier.lexeme();
+	if (vd.rhs){
+		m_ostream << "<- ";
+		vd.rhs->accept(*this);
+	}
+	m_ostream << ")\n";
+	return Object{};
+}

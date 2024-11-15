@@ -21,7 +21,7 @@ struct FuncDeclExpr;
 struct FuncCallExpr;
 struct BlockExpr;
 struct ReturnExpr;
-
+struct VarDefExpr;
 struct ASTVisitor
 {
 	public:
@@ -31,7 +31,6 @@ struct ASTVisitor
 	virtual Object visit(const FuncDeclExpr&) = 0;
 	virtual Object visit(const FuncCallExpr&) = 0;
 	virtual Object visit(const BlockExpr&) = 0;
-
 	virtual Object visit(const PrimaryExpr&) = 0;
 	virtual Object visit(const BinaryExpr&) = 0;
 	virtual Object visit(const ExprList&) = 0;
@@ -43,6 +42,8 @@ struct ASTVisitor
 	virtual Object visit(const TautExpr&) = 0;
 	virtual Object visit(const NilExpr&) = 0;
 	virtual Object visit(const ReturnExpr&) = 0;
+	virtual Object visit(const VarDefExpr&) = 0;
+
 };
 
 struct ASTNode 
@@ -198,6 +199,13 @@ struct ReturnExpr : public Expr
 	ASTNodePtr expr;
 	Object accept(ASTVisitor& v) const override {return v.visit(*this);}
 };
+/* TODO: we need DeclExpr */
+struct VarDefExpr : public Expr
+{
+	Object accept(ASTVisitor& v) const override {return v.visit(*this);}
+	Token identifier;
+	ASTNodePtr rhs;
+};
 
 class Parser
 {
@@ -232,6 +240,7 @@ class Parser
 		ASTNodePtr unary();
 		ASTNodePtr call();
 		ASTNodePtr primary();
+		ASTNodePtr vardef(); 
 
 		ASTNodePtr arguments();
 

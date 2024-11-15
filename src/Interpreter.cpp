@@ -74,8 +74,14 @@ Object Interpreter::visit(const AssignmentExpr& ass)
 	}
 
 	std::shared_ptr<IdentifierExpr> id = std::dynamic_pointer_cast<IdentifierExpr>(ass.lhs);
+	if (!env.lookup(id->tok.lexeme()))
+	{
+		error("Undeclared Identifier. please first declare ur variables.\n");
+		return Object{};
+	}
 	Object rhs = ass.rhs->accept(*this);
-	env.bind(id->tok.lexeme(), ass.rhs->accept(*this));
+	env.assign(id->tok.lexeme(), ass.rhs->accept(*this));
+	
 	return rhs;
 }
 
@@ -91,9 +97,9 @@ Object Interpreter::visit(const LiteralStringExpr& ls)
 
 Object Interpreter::visit(const IdentifierExpr& id) 
 {
-	Object obj = env.lookup(id.tok.lexeme());
+	Object obj ; //= env.lookup(id.tok.lexeme());
 
-	if (!obj)
+	if (!env.lookup(id.tok.lexeme(), obj))
 	{
 		std::cerr << "undeclared identifier " << id.tok.lexeme() << std::endl;
 		error("undeclared identifier");
@@ -223,4 +229,18 @@ Object Interpreter::visit(const BlockExpr& bl)
 	}
 	env.pop_env();
 	return Object{};
+}
+
+Object Interpreter::visit(const VarDefExpr& vd) 
+{
+	if (vd.rhs){	
+		Object value = vd.rhs->accept(*this);
+		env.bind(vd.identifier.lexeme(), value);
+		return value;
+	} else{
+		env.bind(vd.identifier.lexeme(), {}); /* None */
+		return {};
+	}
+
+
 }

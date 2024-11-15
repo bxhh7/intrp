@@ -27,6 +27,7 @@ enum TokenType
 	TOK_ASSIGN, /* Assign '=' */
 	TOK_LOR, /* Logical Or 'or'*/
 	TOK_LAND, /* Logical And 'and'*/
+	TOK_VAR, /* used for variable definiton */
 	TOK_COMMA,
 	TOK_OCURLY,
 	TOK_CCURLY,

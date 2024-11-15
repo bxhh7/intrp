@@ -2,17 +2,38 @@
 
 Env::Env() {push_env();} 
 
-Object Env::lookup(const std::string& key)
+bool Env::lookup(const std::string& key, Object& val)
 {
 	for (int i = env_vec.size() - 1; i >= 0; i--)
 	{
 		auto it = env_vec[i].find(key);
 		if (it != env_vec[i].end())
 		{
-			return it->second;
+			val = it->second;
+			return true;
 		}
 	}
-	return Object{};
+	return false;
+}
+bool Env::assign(const std::string& key, const Object& val) 
+{
+	for (int i = env_vec.size() - 1; i >= 0; i--)
+	{
+		auto it = env_vec[i].find(key);
+		if (it != env_vec[i].end())
+		{
+			it->second = val;
+			return true;
+		}
+	}
+	return false;
+
+}
+bool Env::lookup(const std::string& key)
+{
+	Object obj; // yeah well, i dont really care bout performence in this project
+ 	return this->lookup(key, obj);
+
 }
 
 void Env::bind(const std::string& key, const Object& val)

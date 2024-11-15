@@ -1,5 +1,8 @@
 #include <memory>
 #include <cassert>
+#include <exception>
+#include <stdexcept>
+// #include <runtime_error>
 
 #include "Parser.h"
 #include "Lexer.h"
@@ -21,7 +24,34 @@ ASTNodePtr Parser::expression()
 
 ASTNodePtr Parser::decl()
 {
-	return func();
+	return vardef();
+}
+
+ASTNodePtr Parser::vardef()
+{
+	if (m_lexer.match(TOK_VAR))
+	{
+		/* This is a variable declaration/definition*/
+		std::shared_ptr<VarDefExpr> ret = std::make_shared<VarDefExpr>();
+		if (m_lexer.peek().type() == TOK_IDENTIFIER) {
+			ret->identifier = m_lexer.next();
+		} else
+		{
+			std::cerr << "TEMPORARY : Error: expected identifier after var.\n";
+			throw std::runtime_error{""};			
+		}
+		
+		if (m_lexer.match(TOK_ASSIGN))
+		{
+			ret->rhs = expression(); 
+			return ret;
+		} else{
+			return ret;
+		}
+	} else
+	{
+		return func();
+	}
 }
 
 ASTNodePtr Parser::func()
@@ -214,7 +244,7 @@ ASTNodePtr Parser::assignment()
 	{
 		ASTNodePtr lhs = std::make_shared<IdentifierExpr>(t);
 		rhs = assignment();
-
+		//rhs = expression();
 		return std::make_shared<AssignmentExpr>(lhs, TOK_ASSIGN, rhs);
 	}
 	else 

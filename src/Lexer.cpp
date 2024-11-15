@@ -183,6 +183,10 @@ void Lexer::detect_keyword(Token& tok)
 	{
 		tok.set_type(TOK_LAND);
 	}
+	if (tok.lexeme() == "var")
+	{
+		tok.set_type(TOK_VAR);
+	}
 	if (tok.lexeme() == "or")
 	{
 		tok.set_type(TOK_LOR);
@@ -418,5 +422,6 @@ std::unordered_map<TokenType, std::string> Token::type_str_map =
 	{TOK_IF,             "TOK_IF"},
 	{TOK_CALL,             "TOK_CALL"},
 	{TOK_RETURN,           			"TOK_RETURN"},
+	{TOK_VAR, 				"TOK_VAR"},
 
 };

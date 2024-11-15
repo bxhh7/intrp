@@ -12,7 +12,9 @@ class Env
 		Env() ;
 		using env_map = std::unordered_map<std::string, Object>;
 
-		Object lookup(const std::string&);
+		bool lookup(const std::string&, Object&);
+		bool assign(const std::string& s, const Object&);
+		bool lookup(const std::string&);
 		void bind(const std::string&, const Object&);
 		void push_env();
 		void pop_env();

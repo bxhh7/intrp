@@ -21,6 +21,8 @@ struct PrettyPrinter : public ASTVisitor
 	Object visit(const FuncCallExpr&) override;
 	Object visit(const BlockExpr&) override;
 	Object visit(const ReturnExpr&) override;
+	Object visit(const VarDefExpr&) override;
+
 
 	private:
 		std::ostream& m_ostream;
