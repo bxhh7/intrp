@@ -221,6 +221,7 @@ class Parser
 		std::vector<ASTNodePtr> parse();
 
 	private:
+		ASTNodePtr stmt();
 		ASTNodePtr decl();
 		ASTNodePtr func();
 		ASTNodePtr block();

@@ -12,12 +12,12 @@ std::vector<ASTNodePtr> Parser::parse()
 	std::vector<ASTNodePtr> ret;
 	while (!m_lexer.eof())
 	{
-		ret.push_back(expression());
+		ret.push_back(stmt());
 	}
 	return ret;
 }
 
-ASTNodePtr Parser::expression()
+ASTNodePtr Parser::stmt()
 {
 	return decl();
 }
@@ -110,7 +110,7 @@ ASTNodePtr Parser::ret()
 		return print();
 	}
 }
-
+/* A block is a vector of stmts */
 ASTNodePtr Parser::block()
 {
 	BlockExpr ret;
@@ -118,7 +118,7 @@ ASTNodePtr Parser::block()
 	{
 		while (m_lexer.peek().type() != TOK_CCURLY)
 		{
-			ret.body.push_back(expression());
+			ret.body.push_back(stmt());
 		}
 
 		if (!m_lexer.match(TOK_CCURLY))
@@ -160,7 +160,7 @@ ASTNodePtr Parser::condition() /* if (expr) {expr...} */
 
 		while (m_lexer.peek().type() != TOK_CCURLY) 
 		{
-			ret.body.push_back(expression());
+			ret.body.push_back(stmt());
 		}
 
 		if (!m_lexer.match(TOK_CCURLY))
@@ -174,7 +174,7 @@ ASTNodePtr Parser::condition() /* if (expr) {expr...} */
 				expect("expected {");
 			while (m_lexer.peek().type() != TOK_CCURLY) 
 			{
-				ret.else_cluse.push_back(expression());
+				ret.else_cluse.push_back(stmt());
 			}
 			if (!m_lexer.match(TOK_CCURLY))
 			{
@@ -205,7 +205,7 @@ ASTNodePtr Parser::loop()
 
 		while (m_lexer.peek().type() != TOK_CCURLY) 
 		{
-			ret.body.push_back(expression());
+			ret.body.push_back(stmt());
 		}
 
 		if (!m_lexer.match(TOK_CCURLY))
@@ -218,6 +218,11 @@ ASTNodePtr Parser::loop()
 	else 
 		return assignment();
 
+}
+
+ASTNodePtr Parser::expression()
+{
+	return assignment();
 }
 
 /* 

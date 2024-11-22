@@ -1,13 +1,12 @@
 
-
 fibonacci()
 {
-	a = 0
-	b = 1
-	count = 0
+	var a = 0
+	var b = 1
+	var count = 0
 	while (count < 20)
 	{
-		fib = a + b
+		var fib = a + b
 		print fib
 		a = b
 		b = fib
